@@ -1,0 +1,7 @@
+{
+  "name": "web-scraping-101",
+  "compatibility_date": "2025-07-30",
+  "assets": {
+    "directory": "./dist"
+  }
+}
