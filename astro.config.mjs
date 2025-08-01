@@ -9,6 +9,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "My Docs",
+      // components: ...
       social: [
         {
           icon: "github",
@@ -27,6 +28,10 @@ export default defineConfig({
         {
           label: "Reference",
           autogenerate: { directory: "reference" },
+        },
+        {
+          label: "A. Konsep Dasar",
+          autogenerate: { directory: "a-basic-concept" },
         },
       ],
     }),

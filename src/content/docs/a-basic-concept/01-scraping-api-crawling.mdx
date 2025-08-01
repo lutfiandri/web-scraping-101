@@ -1,0 +1,58 @@
+---
+title: A.1. Scraping, API, dan Crawling
+description: Konsep dasar serta perbedaan scraping, crawling, dan API
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Selamat datang di bab pertama! Sebelum kita mulai menulis kode, sangat penting untuk memahami konsep-konsep dasar yang menjadi fondasi dari web scraping. Di sub-materi ini, kita akan membahas tiga istilah kunci: Web Scraping, API, dan Crawling.
+
+## Apa itu Web Scraping
+
+Bayangkan Anda menemukan sebuah website resep masakan yang sangat Anda sukai. Anda ingin menyimpan semua resep dari website tersebut ke dalam komputer Anda agar bisa diakses kapan saja. Anda bisa melakukannya secara manual: buka setiap halaman resep, lalu _copy-paste_ isinya satu per satu ke dalam file.
+
+**Web Scraping** adalah proses mengotomatiskan tindakan "copy-paste" tersebut. Alih-alih dilakukan oleh manusia, kita menulis sebuah program (sering disebut _bot_ atau _scraper_) yang akan mengunjungi halaman web, mengekstrak informasi yang kita butuhkan (seperti judul resep, bahan, dan langkah-langkah), lalu menyimpannya dalam format yang terstruktur (misalnya, file Excel, database, atau JSON).
+
+<Aside>
+  Web scraping itu seperti menyuruh seorang asisten robot untuk membaca ribuan
+  buku di perpustakaan dan mencatat hanya informasi yang Anda perlukan misalnya
+  daftar judul, penulis, dan penerbit dari setiap buku.
+</Aside>
+
+## Perbedaan dengan API
+
+Saat membahas cara mendapatkan data dari sumber online, Anda akan sering mendengar istilah **API** (Application Programming Interface). Lantas, apa bedanya dengan web scraping?
+
+| Fitur                | Web Scraping                                                                                                                                       | API (Application Programming Interface)                                                                                                                                                               |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sumber Data**      | Data yang terlihat oleh manusia di halaman web (HTML).                                                                                             | Data yang sengaja disediakan oleh pemilik layanan dalam format terstruktur (biasanya JSON atau XML).                                                                                                  |
+| **Cara Kerja**       | "Merampok" data dari antarmuka pengguna (UI).                                                                                                      | "Meminta izin" untuk mendapatkan data melalui jalur resmi yang sudah disiapkan.                                                                                                                       |
+| **Stabilitas**       | **Rentan terhadap perubahan.** Jika pemilik website mengubah desain (layout HTML), scraper Anda kemungkinan besar akan rusak dan perlu diperbaiki. | **Stabil.** Selama penyedia API tidak mengubah _endpoint_ atau struktur datanya, aplikasi Anda akan tetap berfungsi. Perubahan besar biasanya diumumkan dan dirilis sebagai versi baru (mis. API v2). |
+| **Format Data**      | Tidak terstruktur. Anda harus bekerja keras untuk membersihkan dan menyusun data dari kode HTML yang "berantakan".                                 | Terstruktur dan bersih. Data sudah disajikan dalam format yang mudah diproses oleh mesin.                                                                                                             |
+| **Kapan Digunakan?** | Ketika data yang Anda inginkan tidak tersedia melalui API.                                                                                         | Selalu menjadi pilihan **pertama** jika tersedia. Lebih etis, efisien, dan andal.                                                                                                                     |
+
+## Apa itu Web Crawling
+
+**Web Crawling** adalah proses menjelajahi web secara sistematis untuk **menemukan halaman-halaman**. Crawler memulai dari satu atau beberapa halaman web, kemudian mengikuti setiap tautan (_link_) yang ada di halaman tersebut untuk menemukan halaman-halaman lainnya.
+
+<Aside>
+  Search engine seperti Google menggunakan crawler secara masif untuk mengindeks
+  internet. Crawler Google (Googlebot) menjelajahi miliaran halaman untuk
+  mengetahui konten apa saja yang ada di web.
+</Aside>
+
+**Hubungan antara Crawling dan Scraping:**
+Keduanya seringkali berjalan beriringan.
+
+1.  **Crawling menemukan halaman:** Anda mungkin memulai dari halaman utama sebuah situs berita. Crawler Anda akan menemukan semua link ke artikel-artikel berita.
+2.  **Scraping mengekstrak data:** Setelah crawler menemukan sebuah halaman artikel, scraper akan bertugas untuk "mengambil" judul, isi berita, nama penulis, dan tanggal publikasi dari halaman tersebut.
+
+## Ringkasan
+
+- **Crawler**: "Cari semua pintunya!"
+- **Scraper**: "Buka setiap pintu dan ambil barang berharganya!"
+- **API**: "Permisi, mau minta dong 😁"
+
+---
+
+Dengan memahami tiga konsep ini, Anda sudah memiliki fondasi yang kuat untuk melanjutkan perjalanan belajar web scraping.

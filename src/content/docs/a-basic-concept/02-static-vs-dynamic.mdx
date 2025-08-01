@@ -1,0 +1,77 @@
+---
+title: A.2. Website Statis vs. Dinamis
+description: Perbedaan dasar website statis dan dinamis
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Saat menjelajahi internet, kita mungkin tidak menyadari bahwa ada dua jenis utama arsitektur website: **statis** dan **dinamis**. Memahami perbedaan keduanya sangat krusial dalam web scraping, karena cara kita mengambil data dari masing-masing jenis bisa sangat berbeda.
+
+## Website Statis
+
+Website statis adalah jenis yang paling sederhana. Bayangkan sebuah brosur digital. Semua kontennya sudah "tercetak" di dalam file HTML dan tidak berubah-ubah.
+
+### Cara Kerja
+
+![static website flow](/a-02-static-web.excalidraw.svg)
+
+1.  Browser Anda meminta sebuah halaman (misalnya, `web.com/about`).
+2.  Server mengirimkan file HTML tersebut kembali ke browser Anda.
+3.  Browser menampilkannya. Selesai.
+
+### Ciri-ciri
+
+- Dibuat dengan teknologi Server Side Rendering atau Static Site Generation (contoh: HTML, PHP, Astro).
+- Tidak memerlukan interaksi browser seperti scroll dan klik untuk mendapatkan konten.
+- Klik kanan > `view page source` > cari konten > ketemu ✅
+
+![](/a-02-static-view-page-source.png)
+
+## Website Dinamis
+
+Website dinamis jauh lebih interaktif dan kompleks. Kontennya tidak disimpan dalam satu file HTML yang sudah jadi. Sebaliknya, halaman tersebut "dirakit" secara real-time berdasarkan berbagai faktor, seperti siapa yang mengakses, waktu akses, atau interaksi pengguna.
+
+Contoh paling umum adalah media sosial (Instagram, Twitter), situs e-commerce (Tokopedia, Amazon), atau portal berita modern. Feed berita Anda berbeda dengan feed teman Anda, dan harga produk bisa berubah setiap saat.
+
+### Cara Kerja
+
+![dynamic website flow](/a-02-dynamic-web.excalidraw.svg)
+
+1.  Browser Anda meminta sebuah halaman.
+2.  Server mengirim file HTML inti dan JavaScript.
+3.  Browser Anda merakit/me-render HTML dan mengeksekusi JavaScript.
+4.  Kode JavaScript meminta data dari server (melalui RestAPI).
+5.  Server mengirim data yang diminta JavaScript.
+6.  Setelah menerima data (biasanya dalam format JSON), JavaScript akan memodifikasi struktur HTML (DOM) secara dinamis untuk menampilkan data tersebut kepada Anda.
+
+<Aside>
+
+Singkatnya, setidaknya ada 2 permintaan data:
+
+1. Permintaan oleh browser, sama seperti
+   yang dilakukan web statis.
+
+2. Permintaan oleh JavaScript. Permintaan oleh JavaScript bisa terjadi beberapa kali di 1 halaman, contohnya GET /users, GET /posts, dll.
+
+</Aside>
+
+### Ciri-ciri
+
+- Konten dapat berubah setiap kali halaman dimuat atau bahkan saat Anda berinteraksi dengan halaman (misalnya, _scrolling_ ke bawah untuk memuat lebih banyak konten - _infinite scroll_).
+- Banyak ditemui di media sosial dan marketplace.
+- Klik kanan > `view page source` > cari konten > tidak ketemu ❎
+
+![](/a-02-dynamic-view-page-source.png)
+
+## Mengapa Ini Penting
+
+- Untuk crawling website statis, kita hanya butuh 1x request. Bisa menggunakan `requests` di Python atau `curl` di Linux. Cara crawlingnya pun sederhana karena hanya butuh 1x request.
+- Sementara itu, untuk crawling website dinamis, kita butuh emulator **browser** seperti [Playwright], Puppeteer, dan Selenium yang mana memakan jauh lebih banyak memori (RAM) jika dibanding `requests` di Python.
+
+<Aside type="tip">
+  Website statis juga bisa di-crawling menggunakan cara crawling website
+  dinamis. Resikonya lebih memakan RAM saja.
+</Aside>
+
+{/* links */}
+[Playwright]: https://playwright.dev/python
