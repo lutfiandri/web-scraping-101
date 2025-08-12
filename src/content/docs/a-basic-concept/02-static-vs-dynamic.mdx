@@ -5,73 +5,106 @@ description: Perbedaan dasar website statis dan dinamis
 
 import { Aside } from "@astrojs/starlight/components";
 
-Saat menjelajahi internet, kita mungkin tidak menyadari bahwa ada dua jenis utama arsitektur website: **statis** dan **dinamis**. Memahami perbedaan keduanya sangat krusial dalam web scraping, karena cara kita mengambil data dari masing-masing jenis bisa sangat berbeda.
+Pernah kepikiran gak, kenapa scraping Tokopedia rasanya jauh lebih susah daripada scraping Wikipedia? Padahal sama-sama website, kan?
+
+Jawabannya ada di perbedaan mendasar cara mereka menyajikan data. Anggap aja kamu lagi mau beli buku di dua toko yang beda.
+
+**Toko Pertama (Website Statis):** Rak-raknya udah penuh buku, lengkap dengan label harga. Kamu tinggal masuk, ambil buku yang kamu mau, bayar, dan pulang. Semuanya udah siap sedia.
+
+**Toko Kedua (Website Dinamis):** Tokonya keliatan kosong. Kamu harus panggil pelayan dulu, bilang mau buku apa, terus pelayan itu lari ke gudang, nyari bukunya, baru deh dikasih ke kamu. Kadang, harganya bisa beda sama pas kamu liat di katalog.
+
+Di dunia web scraping, kedua "toko" ini butuh cara penaklukan yang sama sekali berbeda. Salah strategi, bisa-bisa scraper kamu malah bengong atau datanya zonk.
 
 ## Website Statis
 
-Website statis adalah jenis yang paling sederhana. Bayangkan sebuah brosur digital. Semua kontennya sudah "tercetak" di dalam file HTML dan tidak berubah-ubah.
+Website statis itu ibaratnya kayak koran atau brosur. Isinya udah dicetak dari sananya, gak bakal berubah mau kamu lihat dari HP atau laptop, mau kamu buka sekarang atau besok.
 
-### Cara Kerja
+### Gimana Cara Kerjanya?
 
 ![static website flow](/a-02-static-web.excalidraw.svg)
 
-1.  Browser Anda meminta sebuah halaman (misalnya, `web.com/about`).
-2.  Server mengirimkan file HTML tersebut kembali ke browser Anda.
-3.  Browser menampilkannya. Selesai.
+Prosesnya super simpel:
 
-### Ciri-ciri
+1.  **Kamu (Browser):** "Server, minta halaman `web.com/about` dong!"
+2.  **Server:** "Oke, nih ambil filenya!" (Langsung ngasih file HTML utuh)
+3.  **Kamu (Browser):** Tinggal nampilin isinya. Selesai!
 
-- Dibuat dengan teknologi Server Side Rendering atau Static Site Generation (contoh: HTML, PHP, Astro).
-- Tidak memerlukan interaksi browser seperti scroll dan klik untuk mendapatkan konten.
-- Klik kanan > `view page source` > cari konten > ketemu ✅
+Gampang, kan? Semua informasi yang kamu lihat di layar itu udah ada di dalam file HTML yang kamu terima pertama kali.
 
-![](/a-02-static-view-page-source.png)
+### Ciri-ciri Website Statis
+
+Kalau kamu ragu, coba trik detektif ini:
+
+> Klik kanan di halaman web > `View Page Source`. Terus `Ctrl+F` dan cari sepotong teks yang kamu lihat di halaman itu.
+
+Kalau ketemu, **99% pasti itu website statis**. Selamat! Misi scraping kamu bakal gampang.
+
+![Contoh View Source di web statis](/a-02-static-view-page-source.png)
+
+Kenapa datanya ada? Ya karena semua kontennya memang udah "dipanggang" jadi satu di dalam file HTML-nya.
 
 ## Website Dinamis
 
-Website dinamis jauh lebih interaktif dan kompleks. Kontennya tidak disimpan dalam satu file HTML yang sudah jadi. Sebaliknya, halaman tersebut "dirakit" secara real-time berdasarkan berbagai faktor, seperti siapa yang mengakses, waktu akses, atau interaksi pengguna.
+Nah, ini dia biang keroknya. Website dinamis itu kayak feed Instagram atau halaman produk di e-commerce. Kontennya bisa beda-beda tiap orang, tergantung siapa kamu, kapan kamu buka, atau bahkan seberapa jauh kamu scroll.
 
-Contoh paling umum adalah media sosial (Instagram, Twitter), situs e-commerce (Tokopedia, Amazon), atau portal berita modern. Feed berita Anda berbeda dengan feed teman Anda, dan harga produk bisa berubah setiap saat.
+Kontennya gak langsung ada di file HTML awal. Halamannya itu kayak kerangka kosong yang "dirakit" isinya belakangan pakai JavaScript.
 
-### Cara Kerja
+### Gimana Cara Kerjanya?
 
 ![dynamic website flow](/a-02-dynamic-web.excalidraw.svg)
 
-1.  Browser Anda meminta sebuah halaman.
-2.  Server mengirim file HTML inti dan JavaScript.
-3.  Browser Anda merakit/me-render HTML dan mengeksekusi JavaScript.
-4.  Kode JavaScript meminta data dari server (melalui RestAPI).
-5.  Server mengirim data yang diminta JavaScript.
-6.  Setelah menerima data (biasanya dalam format JSON), JavaScript akan memodifikasi struktur HTML (DOM) secara dinamis untuk menampilkan data tersebut kepada Anda.
+Prosesnya jadi ga sesederhana tadi:
+
+1.  **Kamu (Browser):** "Server, minta halaman `web.com/feeds`!"
+2.  **Server:** "Nih kerangkanya dulu (HTML + JavaScript), datanya nyusul."
+3.  **Browser:** Nampilin kerangka kosong.
+4.  **JavaScript di Browser:** "Woi Server, datanya mana buat feeds?" (Ini namanya request ke API)
+5.  **Server:** "Oke, nih data feeds-nya dalam format JSON."
+6.  **JavaScript di Browser:** "Sip, data diterima!" (Lalu data JSON itu "disuntikkin" ke kerangka HTML tadi).
+
+Tada! Kamu udah bisa lihat feeds-nya sekarang.
 
 <Aside>
-
-Singkatnya, setidaknya ada 2 permintaan data:
-
-1. Permintaan oleh browser, sama seperti
-   yang dilakukan web statis.
-
-2. Permintaan oleh JavaScript. Permintaan oleh JavaScript bisa terjadi beberapa kali di 1 halaman, contohnya GET /users, GET /posts, dll.
-
+  Intinya, ada **dua tahap** request. Babak pertama minta kerangka, tahap kedua
+  minta isinya.
 </Aside>
 
-### Ciri-ciri
+### Ciri-ciri Website Dinamis
 
-- Konten dapat berubah setiap kali halaman dimuat atau bahkan saat Anda berinteraksi dengan halaman (misalnya, _scrolling_ ke bawah untuk memuat lebih banyak konten - _infinite scroll_).
-- Banyak ditemui di media sosial dan marketplace.
-- Klik kanan > `view page source` > cari konten > tidak ketemu ❎
+Uji lagi dengan trik detektif yang sama:
 
-![](/a-02-dynamic-view-page-source.png)
+> Klik kanan > `View Page Source` > `Ctrl+F` > cari harga atau judul produk.
 
-## Mengapa Ini Penting
+Kalau gak ketemu, **99% pasti itu website dinamis**.
 
-- Untuk crawling website statis, kita hanya butuh 1x request. Bisa menggunakan `requests` di Python atau `curl` di Linux. Cara crawlingnya pun sederhana karena hanya butuh 1x request.
-- Sementara itu, untuk crawling website dinamis, kita butuh emulator **browser** seperti [Playwright], Puppeteer, dan Selenium yang mana memakan jauh lebih banyak memori (RAM) jika dibanding `requests` di Python.
+![Contoh View Source di web dinamis](/a-02-dynamic-view-page-source.png)
+
+Kenapa datanya gak ada? Karena data aslinya baru diminta sama JavaScript _setelah_ kerangka HTML-nya nyampe di browser kamu.
+
+## Perang Scraper: Statis vs Dinamis
+
+"Terus ngaruhnya apa buat aku?"
+
+Ngaruh banget! Ini nentuin senjata apa yang harus kamu bawa ke medan perang.
+
+**Melawan Website Statis:**
+Cukup bawa `requests` di Python atau `curl` di terminal. Satu tembakan (request) langsung dapet semua datanya. Cepat, ringan, hemat resource. Ibaratnya cuma nembak pake pistol.
+
+**Melawan Website Dinamis:**
+Kamu butuh senjata berat: **browser asli yang bisa dikontrol kode**, kayak [Playwright] atau Selenium. Kenapa? Karena scraper kamu harus sabar nungguin semua drama request data oleh JavaScript selesai.
+
+Konsekuensinya?
+
+- **Lambat:** Nunggu browser render itu butuh waktu.
+- **Boros RAM:** Buka browser itu makan memori, apalagi kalau puluhan sekaligus.
+- **Lebih kompleks:** Kode kamu harus bisa menangani timing, klik, dan scroll.
 
 <Aside type="tip">
-  Website statis juga bisa di-crawling menggunakan cara crawling website
-  dinamis. Resikonya lebih memakan RAM saja.
+  Kamu bisa aja pake Playwright buat scraping web statis. Tapi itu kayak nembak
+  nyamuk pake bazoka. Bisa, tapi boros dan gak efisien.
 </Aside>
+
+Jadi, identifikasi dulu apakah targetmu itu website statis atau dinamis biar scraping-mu lebih optimal.
 
 {/* links */}
 [Playwright]: https://playwright.dev/python
