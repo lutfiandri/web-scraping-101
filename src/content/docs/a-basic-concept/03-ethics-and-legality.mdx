@@ -1,0 +1,100 @@
+---
+title: A.3. Etika dan Legalitas
+description: Batasan abu-abu antara mengambil data dan mencuri data
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Web scraping itu ibarat punya kunci super yang bisa membuka banyak pintu di dunia maya. Kamu bisa masuk ke "toko" mana pun dan mengambil "barang" (data) yang kamu mau. Tapi, seperti di dunia nyata, ada aturan mainnya.
+
+Kalau kamu asal masuk dan ambil semua barang seenaknya, kamu bisa dianggap perampok. Server website bisa tumbang, dan paling parahnya, kamu bisa kena masalah hukum.
+
+Jadi, sebelum lepasliarkan scraper buatanmu, mari kita pelajari cara menjadi "tamu yang baik" di rumah orang lain.
+
+## 1. Patuhi `robots.txt`
+
+Setiap website yang "sopan" biasanya punya file di alamat `namadomain.com/robots.txt`. Anggap saja ini adalah keset selamat datang yang berisi aturan untuk para robot (termasuk scraper-mu).
+
+File ini memberitahu bagian mana dari website yang **BOLEH** dan **TIDAK BOLEH** dikunjungi oleh robot.
+
+Contoh `robots.txt` milik Tokopedia:
+
+```txt
+User-agent: *
+Disallow: /user
+Disallow: /cart
+Disallow: /checkout
+Disallow: /search
+```
+
+- `User-agent: *`: Aturan ini berlaku untuk semua robot.
+- `Disallow: /search`: Artinya, "Wahai para robot, tolong jangan akses halaman pencarian saya ya."
+
+**Selalu patuhi `robots.txt`!** Melanggarnya adalah dosa pertama dan paling fatal dalam dunia scraping. Itu seperti nekat masuk ke kamar pribadi pemilik rumah padahal sudah ada tulisan "Dilarang Masuk".
+
+## 2. Batasi Kecepatan Scraping
+
+Scraper kamu bisa mengirim ratusan permintaan dalam satu detik. Manusia mana bisa secepat itu?
+
+Kalau kamu terlalu "ganas", server website target bisa kewalahan dan akhirnya _down_. Ini merugikan semua orang, termasuk pengguna lain yang ingin mengakses website secara normal. Kamu baru saja melakukan serangan DDoS mini tanpa sadar.
+
+**Solusinya? Bersikaplah seperti manusia.**
+
+- **Beri jeda:** Kasih `time.sleep(1)` atau `time.sleep(5)` di antara setiap request. Biarkan server bernapas.
+- **Scrape di jam sepi:** Kalau memungkinkan, jalankan scraper di malam hari saat trafik website sedang rendah.
+
+<Aside type="caution">
+  Website bisa dengan mudah mendeteksi IP Address yang mengirim request secara
+  brutal dan langsung memblokirnya. Kalau sudah begini, kamu tidak akan bisa
+  mengakses website itu lagi dari jaringanmu.
+</Aside>
+
+## 3. Baca Aturan Layanan (ToS)
+
+Terms of Service adalah dokumen legal yang mengikat antara kamu dan pemilik website. Seringkali di dalamnya ada klausa yang secara eksplisit melarang penggandaan atau pengambilan data secara otomatis.
+
+Meskipun `robots.txt` mengizinkan, jika ToS melarang, kamu berada di area abu-abu secara hukum. Kasus paling terkenal adalah sengketa antara LinkedIn dan hiQ Labs, yang menunjukkan betapa rumitnya legalitas scraping.
+
+Intinya, jika datanya bersifat publik dan kamu tidak merugikan bisnis mereka, biasanya lebih aman. Tapi jika kamu scraping data untuk dijual lagi dan menjadi kompetitor mereka, siap-siap saja dapat surat cinta dari pengacara.
+
+## 4. Kenalkan Diri Anda (User-Agent)
+
+Saat scraper-mu mengirim request, ia membawa "KTP" yang disebut `User-Agent`. Secara default, library seperti `requests` di Python akan jujur mengaku, "Saya adalah `python-requests/2.28.1`".
+
+Ini memudahkan pemilik website untuk memblokir semua request dari Python.
+
+Etika yang baik adalah memberikan informasi kontak dalam User-Agentmu.
+
+```python
+headers = {
+    'User-Agent': 'MyCoolScraper/1.0 (+http://my-project-website.com)'
+}
+requests.get(url, headers=headers)
+```
+
+Dengan begini, jika scraper-mu menyebabkan masalah, pemilik web bisa menghubungimu dengan baik-baik, bukannya langsung main blokir.
+
+## Rangkuman Etika
+
+1.  **Cek `robots.txt` dulu?** (Selalu!)
+2.  **API tersedia?** (Gunakan API jika ada, jangan scrape)
+3.  **Request-nya dibatasi?** (Beri jeda, jangan serakah)
+4.  **Data pribadi orang lain?** (JANGAN DIAMBIL!)
+5.  **Melanggar ToS?** (Pikirkan risikonya)
+6.  **Identitas jelas?** (Gunakan User-Agent yang informatif)
+
+Menjadi scraper yang beretika bukan cuma soal menghindari masalah hukum, tapi juga soal menjaga ekosistem internet tetap sehat untuk semua.
+
+<Aside type="danger" title="Area Abu-abu">
+  Aturan di atas adalah kitab suci bagi scraper yang baik. Tapi di dunia nyata, kadang kamu akan menemukan situasi yang lebih rumit.
+
+Contoh: `robots.txt` melarang scraping, tapi datanya adalah informasi publik yang sangat penting untuk riset. Atau, sebuah website memblokir semua `User-Agent` `python-requests` secara default, bahkan untuk halaman yang diizinkan.
+
+Di sinilah letak "seni" dari web scraping. Beberapa praktisi (dengan risiko ditanggung sendiri) kadang-kadang "membengkokkan" aturan ini dengan:
+
+- **Mengabaikan `robots.txt`** untuk data publik non-sensitif. Ingat, `robots.txt` adalah permintaan, bukan tembok hukum. Tapi ini sangat tidak disarankan.
+- **Menyamarkan `User-Agent`** menjadi browser umum (Chrome, Firefox) agar tidak langsung diblokir.
+
+**UNTUK TUJUAN PEMBELAJARAN:** Jika Anda ingin mencoba ini, lakukanlah dengan **SANGAT HATI-HATI**. Ambil sedikit sekali data, beri jeda yang sangat lama, dan jangan pernah menyentuh data personal. Anggap saja Anda sedang belajar membobol gembok di rumah sendiri, bukan di rumah orang lain. Tanggung jawab sepenuhnya ada di tangan Anda.
+
+</Aside>
