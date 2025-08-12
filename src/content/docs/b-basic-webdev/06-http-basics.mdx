@@ -1,0 +1,130 @@
+---
+title: B.6. HTTP Request & Response, Percakapan Digital
+description: Memahami bagaimana scraper berkomunikasi dengan server melalui protokol HTTP.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Sampai sekarang, kita sudah belajar cara membedah website yang sudah "jadi". Tapi bagaimana sebenarnya data itu sampai ke browser kita? Bagaimana cara scraper kita "meminta" halaman dari server?
+
+Jawabannya ada pada **HTTP (HyperText Transfer Protocol)** - bahasa universal yang digunakan oleh semua hal di internet untuk saling bicara.
+
+Anggap saja ini seperti percakapan di restoran. Kamu (scraper) adalah pelanggan, dan server website adalah pelayan.
+
+## 1. Request: "Permisi, Saya Mau Pesan"
+
+Setiap kali kamu mengetik URL di browser atau scraper kamu mengakses website, yang terjadi adalah kamu mengirim **HTTP Request** ke server.
+
+Request ini punya beberapa komponen penting:
+
+### Method (Cara Memesan)
+
+| Method   | Analogi Restoran              | Kapan Digunakan?                               |
+| :------- | :---------------------------- | :--------------------------------------------- |
+| **GET**  | "Saya mau lihat menu dulu."   | Mengambil data (90% scraping menggunakan ini). |
+| **POST** | "Saya mau pesan makanan ini." | Mengirim data (login, form submission).        |
+
+### Headers (Cara Kamu Memperkenalkan Diri)
+
+Headers adalah informasi tambahan yang kamu sampaikan tentang dirimu:
+
+```http
+GET /products HTTP/1.1
+Host: tokopedia.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0
+Accept: text/html,application/xhtml+xml
+Accept-Language: id-ID,id;q=0.9,en;q=0.8
+```
+
+- **Host**: "Saya mau ke tokopedia.com"
+- **User-Agent**: "Saya pakai browser Chrome di Windows"
+- **Accept**: "Saya bisa terima file HTML"
+- **Accept-Language**: "Saya lebih suka bahasa Indonesia"
+
+<Aside>
+  **User-Agent** adalah "identitas" yang paling sering kita manipulasi saat
+  scraping. Server bisa memblokir request yang User-Agent-nya mencurigakan
+  (misalnya `python-requests/2.28.1`).
+</Aside>
+
+## 2. Response: "Baik, Ini Pesanannya"
+
+Setelah server menerima request-mu, ia akan membalas dengan **HTTP Response**:
+
+### Status Code (Kondisi Pesanan)
+
+| Code    | Arti                  | Analogi Restoran                            |
+| :------ | :-------------------- | :------------------------------------------ |
+| **200** | OK                    | "Nih, pesanannya sudah siap!"               |
+| **404** | Not Found             | "Maaf, menu yang kamu minta tidak ada."     |
+| **403** | Forbidden             | "Maaf, kamu tidak boleh masuk ke area VIP." |
+| **429** | Too Many Requests     | "Tunggu dulu, kamu pesan terlalu sering!"   |
+| **500** | Internal Server Error | "Maaf, dapur kami sedang bermasalah."       |
+
+### Response Headers & Body
+
+Server akan mengirim balik informasi tentang data yang dikirimkan:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Length: 50234
+Set-Cookie: session_id=abc123; Path=/
+
+<!DOCTYPE html>
+<html>
+<head>...</head>
+<body>...</body>
+</html>
+```
+
+- **Status**: `200 OK` (berhasil)
+- **Content-Type**: Jenis file yang dikirim (HTML)
+- **Content-Length**: Ukuran file
+- **Set-Cookie**: Server minta kamu simpan "token" ini untuk kunjungan berikutnya
+- **Body**: Isi file HTML yang kita butuhkan
+
+## 3. Implikasi untuk Scraping
+
+Memahami HTTP Request/Response sangat penting karena:
+
+### A. Error Handling
+
+```python
+import requests
+
+response = requests.get("https://example.com")
+
+if response.status_code == 200:
+    print("Berhasil!")
+    # Lanjut scraping...
+elif response.status_code == 404:
+    print("Halaman tidak ditemukan")
+elif response.status_code == 429:
+    print("Kebanyakan request, tunggu sebentar...")
+    # Tambahkan delay
+```
+
+### B. Headers Manipulation
+
+```python
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+}
+
+response = requests.get(url, headers=headers)
+```
+
+### C. Session & Cookies
+
+Beberapa website butuh "sesi" login sebelum bisa diakses:
+
+```python
+session = requests.Session()
+# Login dulu
+session.post("https://site.com/login", data={"user": "xxx", "pass": "yyy"})
+# Baru scraping
+response = session.get("https://site.com/protected-page")
+```
+
+Dengan memahami "percakapan" HTTP ini, kamu bisa mendiagnosa kenapa scraper kadang gagal, dan lebih penting lagi, kamu bisa menyamar sebagai browser normal agar tidak dideteksi sebagai bot.

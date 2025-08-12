@@ -1,0 +1,90 @@
+---
+title: B.1. Struktur Dasar HTML
+description: HTML adalah fondasi dari semua website. Mari kita pelajari cara membacanya.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="note" title="Boleh Dilewati Jika Sudah Paham">
+  "Loh, kenapa kita harus belajar web development? Bukannya ini materi web scraping?"
+
+Sederhananya, web scraping adalah seni "membaca" dan "menavigasi" kode sebuah website. Kita tidak bisa membaca kalau tidak kenal huruf-hurufnya. Di dunia web, "huruf" itu adalah tag HTML dan "kalimat" itu adalah CSS Selector.
+
+**Bab B ini adalah kamus dasar kita.** Jika kamu sudah familiar dengan HTML, CSS Selector, dan cara kerja Inspect Element di browser, silakan langsung lompat ke **Bab C**.
+
+</Aside>
+
+Setiap kali kamu membuka sebuah website, browser-mu sebenarnya sedang membaca sebuah dokumen blueprint yang disebut HTML. Untuk bisa menjadi scraper yang andal, kamu harus bisa membaca blueprint ini sama mahirnya seperti seorang arsitek.
+
+Anggap saja HTML itu seperti kerangka tubuh manusia. Ada kepala, badan, lengan, dan jari. Semuanya tersusun dalam sebuah hierarki yang jelas. Jari menempel di tangan, tangan menempel di lengan, dan lengan menempel di badan.
+
+Di HTML, kita menyebut "tulang-tulang" ini sebagai **elemen** atau **tag**.
+
+## 1. Tag
+
+Tag adalah perintah dasar dalam HTML yang memberitahu browser cara menampilkan sesuatu. Hampir semua tag datang berpasangan: tag pembuka dan tag penutup.
+
+- `<h1>`: Ini tag pembuka untuk judul utama.
+- `</h1>`: Ini tag penutupnya (perhatikan garis miring `/`).
+
+```html
+<h1>Ini adalah Judul Utama</h1>
+<p>Ini adalah sebuah paragraf.</p>
+<a>Ini adalah sebuah link.</a>
+```
+
+Konten berada di antara tag pembuka dan penutup. Scraper kita nanti akan bertugas untuk mencari tag-tag ini dan mengambil konten di dalamnya.
+
+## 2. Atribut
+
+Kalau tag adalah "batu bata"-nya, maka **atribut** adalah "warna" atau "ukuran" dari batu bata tersebut. Atribut memberikan informasi tambahan tentang sebuah tag dan selalu diletakkan di dalam tag pembuka.
+
+Contoh paling umum adalah tag `<a>` (anchor/link). Tanpa atribut, ia hanya teks biasa.
+
+```html
+<a>Ini link rusak</a>
+```
+
+Agar berfungsi, kita butuh atribut `href` (hypertext reference) untuk memberitahu browser ke mana link itu harus pergi.
+
+```html
+<a href="https://google.com">Ini link ke Google</a>
+```
+
+Atribut lain yang sangat penting adalah `class` dan `id`. Keduanya adalah "label nama" yang diberikan oleh developer web untuk memudahkan penataan (CSS) dan interaksi (JavaScript). Bagi kita, `class` dan `id` adalah petunjuk terbaik untuk menemukan data!
+
+```html
+<div id="profil-pengguna" class="kartu-info pengguna-premium">
+  <p>Nama: Udin</p>
+</div>
+```
+
+<Aside>
+  `id` itu unik, hanya boleh ada satu di seluruh halaman (seperti nomor KTP).
+  Sedangkan `class` bisa dipakai oleh banyak elemen (seperti marga keluarga).
+</Aside>
+
+## 3. Hierarki
+
+Elemen-elemen HTML tidak hidup sendiri-sendiri, mereka bersarang di dalam satu sama lain, membentuk sebuah struktur pohon. Ini disebut hierarki atau _nesting_.
+
+```html
+<body>
+  <div>
+    <h1>Judul Artikel</h1>
+    <p>
+      Ini adalah paragraf pertama.
+      <span>Ini adalah teks di dalam paragraf.</span>
+    </p>
+  </div>
+</body>
+```
+
+Dalam contoh ini:
+
+- `<body>` adalah **induk** (parent) dari `<div>`.
+- `<div>` adalah **anak** (child) dari `<body>`, tapi juga **induk** dari `<h1>` dan `<p>`.
+- `<h1>` dan `<p>` adalah **saudara** (siblings) karena mereka berada di level yang sama.
+- `<span>` adalah **anak** dari `<p>`.
+
+Memahami hubungan keluarga ini **SANGAT PENTING**. Kenapa? Karena saat scraping, kita seringkali menavigasi struktur ini, misalnya: "Cari semua tag `<a>` yang berada di dalam `div` dengan `

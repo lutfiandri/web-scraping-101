@@ -1,0 +1,66 @@
+---
+title: B.5. Developer Tools
+description: Menggunakan Inspect Element dan Developer Tools untuk membedah website secara langsung dan menguji selector.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Sejauh ini kita telah belajar tentang "anatomi" website: HTML sebagai tulang, CSS sebagai kulit, dan Selector sebagai cara menunjuk bagian tubuh.
+
+Sekarang, saatnya membuka "ruang operasi". **Developer Tools (DevTools)** adalah seperangkat alat canggih yang ada di dalam setiap browser modern. Bagi seorang scraper, ini adalah laboratorium, ruang interogasi, dan lapangan tembak, semuanya dalam satu tempat.
+
+## 1. Membuka DevTools
+
+Setiap browser punya cara yang sedikit berbeda, tapi pada dasarnya sama. Coba salah satu dari cara ini:
+
+- **Klik Kanan:** Klik kanan di mana saja pada halaman web, lalu pilih **Inspect** atau **Inspect Element**.
+- **Keyboard A:** Tekan `F12`.
+- **Keyboard B:** Tekan `Ctrl+Shift+I` (di Windows/Linux) atau `Cmd+Option+I` (di Mac).
+
+Panel DevTools akan muncul, biasanya di sisi kanan atau bawah layar. Mungkin terlihat mengintimidasi pada awalnya, tapi kita hanya butuh fokus pada beberapa bagian saja.
+
+## 2. "Elements" / "Inspector"
+
+Tab pertama dan terpenting adalah **Elements** (di Chrome dan browser berbasis Chromium) atau **Inspector** (di Firefox). Ini adalah versi "hidup" dari HTML sebuah halaman.
+
+- **Berbeda dari "View Page Source"**: Ingat website dinamis? "View Page Source" hanya menunjukkan kerangka awal. Tab ini menunjukkan HTML **final** setelah semua JavaScript selesai "merakit" halaman. Inilah yang sebenarnya dilihat oleh scraper kita.
+- **Interaktif**: Coba gerakkan mouse Anda di atas baris-baris kode HTML di panel ini. Lihat? Bagian yang sesuai di halaman web akan disorot!
+
+## 3. "Inspect"
+
+Di pojok kiri atas panel DevTools, ada ikon yang terlihat seperti panah di dalam kotak. Ini adalah teman terbaikmu.
+
+![inspect element](/b-05-inspect-element.png)
+
+1.  Klik ikon **Inspect** ini.
+2.  Gerakkan mouse Anda ke halaman web. Area-area akan disorot saat Anda bergerak.
+3.  **Klik** pada elemen apa pun yang menarik perhatianmu (misalnya, judul produk, harga, atau gambar).
+
+BOOM! Panel Elements/Inspector akan langsung melompat ke baris kode HTML yang tepat untuk elemen yang kamu klik. Tidak perlu lagi mencari-cari secara manual. Ini adalah cara tercepat untuk menemukan "alamat" dari data yang kamu inginkan.
+
+## 4. "Search"
+
+Setelah kamu menemukan elemen dan melihat `class` atau `id`-nya, bagaimana cara memastikan selectormu benar sebelum dimasukkan ke dalam kode Python?
+
+Di dalam panel Elements/Inspector, tekan `Ctrl+F` (Windows/Linux) atau `Cmd+F` (Mac). Sebuah kotak pencarian akan muncul.
+
+![search selector](/b-05-search-selector.png)
+
+Kamu bisa mengetik CSS Selector atau XPath langsung di kotak ini.
+
+- **Selector yang bagus**: `div.product-card` akan menyorot semua kartu produk dan mungkin menunjukkan "1 of 20 matches". Ini pertanda baik.
+- **Selector yang buruk**: `span.price` mungkin akan menunjukkan "0 matches" atau "1 of 100" (memilih terlalu banyak hal). Ini berarti selectormu kurang spesifik dan perlu diperbaiki.
+
+<Aside type="tip">
+  Selalu, selalu, dan **selalu** uji selectormu di DevTools sebelum
+  menggunakannya di dalam kode. Ini akan menghemat berjam-jam waktu debugging.
+</Aside>
+
+Dengan tiga alat ini—**Inspector/Elements, Inspect Tool, dan Search**—kamu sekarang memiliki alur kerja lengkap untuk membedah website mana pun:
+
+1.  **Inspect** untuk menunjuk target.
+2.  Lihat `class` atau `id` di **Elements/Inspector** untuk membuat draf selector.
+3.  Uji dan perbaiki selector di **Search** sampai presisi.
+4.  Salin selector yang sudah teruji ke kodemu.
+
+Selamat! Kamu telah menyelesaikan Bab B dan sekarang memiliki semua pengetahuan dasar untuk mulai menulis kode scraping yang sesungguhnya.

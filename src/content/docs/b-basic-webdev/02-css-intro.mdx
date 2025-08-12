@@ -1,0 +1,53 @@
+---
+title: B.2. Pengenalan CSS
+description: Mengenal CSS, alat untuk membuat website jadi cantik.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Kalau HTML adalah kerangka (skeleton) dari sebuah website, maka **CSS (Cascading Style Sheets)** adalah pakaian, makeup, dan gaya rambutnya.
+
+Tugas CSS hanya satu: membuat halaman web yang tadinya hanya teks hitam-putih menjadi lebih indah dan enak dilihat. CSS-lah yang mengatur warna, ukuran font, layout, dan semua aspek visual lainnya.
+
+## Bagaimana CSS Bekerja?
+
+CSS bekerja dengan cara "memilih" elemen HTML tertentu, lalu "menerapkan" gaya (style) pada elemen tersebut.
+
+Perhatikan tiga komponen utamanya:
+
+1.  **Selector**: "Target" elemen HTML yang ingin dihias.
+2.  **Property**: "Aspek" visual yang ingin diubah (misalnya `color` atau `font-size`).
+3.  **Value**: "Nilai" dari aspek tersebut (misalnya `red` atau `16px`).
+
+![Contoh CSS Selector di Tokopedia](/b-02-css-selector.png)
+
+Dalam gambar di atas, developer Tokopedia menggunakan selector `.prd_container-card` untuk memilih setiap kartu produk. Kemudian mereka bisa menerapkan berbagai gaya, misalnya:
+
+```css
+/* Contoh kode CSS untuk kartu produk */
+
+.prd_container-card {
+  border: 1px solid #e0e0e0; /* Memberi bingkai */
+  border-radius: 8px; /* Membuat sudut melengkung */
+}
+```
+
+Kode di atas akan mencari semua elemen yang punya `class="prd_container-card"` dan memberinya bingkai serta sudut yang melengkung.
+
+## Kenapa Scraper Peduli dengan CSS?
+
+"Oke, jadi CSS itu buat dandanin web. Terus, urusannya apa sama kita yang cuma mau ambil data?"
+
+Pertanyaan bagus. Jawabannya adalah: **Kita tidak peduli dengan makeup-nya, tapi kita SANGAT peduli dengan cara makeup itu diterapkan.**
+
+Untuk bisa menerapkan gaya, developer web harus menulis **Selector** yang sangat spesifik untuk menargetkan elemen. Tanpa sadar, mereka sudah membuatkan "alamat" atau "koordinat" yang presisi untuk data yang kita cari.
+
+<Aside type="tip">
+  Developer menggunakan CSS Selector untuk memberi warna pada data. Kita
+  menggunakan CSS Selector yang sama untuk **mengambil** data tersebut.
+</Aside>
+
+Contoh:
+Seorang developer di Tokopedia menulis selector `.prd_container-card` untuk memberi bingkai pada setiap kartu produk. Kita bisa "meminjam" selector yang sama untuk memberitahu scraper kita, "Hei, cari semua elemen dengan `class="prd_container-card"`, karena di dalamnya pasti ada info produk!"
+
+Jadi, lupakan soal warna dan layout. Fokus kita di bab selanjutnya adalah membedah bagian paling penting dari CSS untuk seorang scraper: **Selector**. Itulah senjata utama kita.

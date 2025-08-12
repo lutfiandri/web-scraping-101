@@ -1,0 +1,72 @@
+---
+title: B.4. XPath Selector
+description: Mengenal XPath, metode navigasi yang lebih kuat dan fleksibel untuk situasi yang tidak bisa ditangani CSS Selector.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Kita sudah punya senjata andalan, yaitu CSS Selector. Tapi terkadang, kita menghadapi situasi di mana alamat rumah (class/id) tidak jelas, atau kita perlu menemukan sesuatu berdasarkan petunjuk yang lebih unik, misalnya, "Cari rumah yang di depannya ada tulisan 'Dijual'".
+
+Di sinilah **XPath (XML Path Language)** masuk. Jika CSS Selector adalah alamat pos, maka XPath adalah serangkaian instruksi GPS belokan-demi-belokan.
+
+## 1. Sintaks Dasar XPath
+
+XPath melihat dokumen HTML sebagai sebuah pohon (sama seperti yang kita bayangkan sebelumnya). Sintaksnya adalah cara kita mendeskripsikan jalur di pohon itu.
+
+| Sintaks | Arti                         | Analogi GPS                   |
+| :------ | :--------------------------- | :---------------------------- |
+| `//`    | Di mana pun di dalam dokumen | "Mulai pencarian global..."   |
+| `/`     | Anak langsung                | "Ambil belokan berikutnya..." |
+| `.`     | Node saat ini                | "Anda berada di sini."        |
+| `..`    | Node induk (parent)          | "Putar balik / Kembali."      |
+| `*`     | Elemen apa pun               | "Bangunan apa pun..."         |
+| `@`     | Memilih atribut              | "Yang punya plang nama..."    |
+
+## 2. Contoh Penggunaan XPath
+
+Mari kita gunakan contoh HTML ini:
+
+```html
+<div id="products">
+  <div class="product-card">
+    <h2>Sepatu Biru</h2>
+    <div class="details"><span>Harga: </span><strong>Rp 300.000</strong></div>
+  </div>
+  <div class="product-card">
+    <h2>Kaos Merah</h2>
+    <div class="details"><span>Stok: </span><strong>15 pcs</strong></div>
+    <a href="/reviews">Lihat Review</a>
+  </div>
+</div>
+```
+
+| Tujuan                         | Contoh XPath                               | Penjelasan                                                                                          |
+| :----------------------------- | :----------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| Pilih semua judul produk       | `//h2`                                     | Pilih semua `<h2>` di mana pun.                                                                     |
+| Pilih harga "Sepatu Biru"      | `//h2[text()="Sepatu Biru"]/../div/strong` | Dari `<h2>` yang teksnya "Sepatu Biru", naik (`..`), cari `div`, lalu ambil `<strong>` di dalamnya. |
+| Pilih semua link               | `//a[@href]`                               | Pilih semua `<a>` yang punya atribut `href`.                                                        |
+| Pilih `div` yang punya `class` | `//div[contains(@class, "product")]`       | Pilih `div` yang atribut `class`-nya mengandung kata "product".                                     |
+
+Perhatikan betapa kuatnya dua fungsi ini:
+
+- `text()`: Memungkinkan kita memilih elemen berdasarkan **isi teksnya**. Ini adalah keunggulan terbesar XPath yang tidak dimiliki CSS Selector.
+- `contains()`: Sangat berguna untuk `class` yang dinamis, mirip dengan selector atribut `*=` di CSS.
+
+## 3. Kapan Pakai CSS Selector, Kapan Pakai XPath?
+
+Ini adalah perdebatan klasik dalam dunia scraping. Berikut panduan praktisnya:
+
+| Situasi                                        | Pilihan Terbaik  | Kenapa?                                                                  |
+| :--------------------------------------------- | :--------------- | :----------------------------------------------------------------------- |
+| Scraping biasa (berdasarkan ID, class, tag)    | **CSS Selector** | Lebih mudah dibaca, lebih singkat, dan seringkali lebih cepat.           |
+| Perlu memilih berdasarkan teks di dalam elemen | **XPath**        | Hanya XPath yang bisa melakukan `//button[text()='Beli Sekarang']`.      |
+| Perlu naik ke elemen induk (parent)            | **XPath**        | Hanya XPath yang bisa melakukan navigasi "ke atas" dengan `..`           |
+| Stabilitas dan dukungan library                | **CSS Selector** | Hampir semua library scraping modern sangat mengoptimalkan CSS Selector. |
+
+<Aside type="tip">
+  **Aturan praktis:** Selalu mulai dengan CSS Selector. Jika kamu merasa buntu
+  atau butuh menavigasi secara kompleks (seperti naik ke induk atau memilih
+  berdasarkan teks), barulah keluarkan senjata pamungkasmu: XPath.
+</Aside>
+
+Dengan mengetahui keduanya, kamu sekarang punya peralatan lengkap untuk membongkar hampir semua jenis struktur website.

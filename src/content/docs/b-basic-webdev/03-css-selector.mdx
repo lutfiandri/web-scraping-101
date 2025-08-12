@@ -1,0 +1,107 @@
+---
+title: B.3. CSS Selector
+description: Menguasai CSS Selector, senjata utama untuk menunjuk dan mengambil data apa pun dari halaman web.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Selamat datang di gudang senjata kita. Jika HTML adalah blueprint dan CSS adalah catnya, maka **CSS Selector adalah jari telunjukmu**. Inilah alat yang akan kita gunakan untuk menunjuk dengan presisi ke data mana pun yang kita inginkan di halaman web.
+
+Menguasai CSS Selector itu seperti belajar membaca peta harta karun. Kamu harus tahu apa arti simbol "pohon palem", "batu besar", atau "tiga langkah ke utara".
+
+Mari kita pelajari simbol-simbol itu satu per satu.
+
+## 1. Selector Dasar
+
+Ini adalah selector paling dasar, seperti menunjuk target yang sangat jelas.
+
+| Selector              | Contoh             | Analogi                                       |
+| :-------------------- | :----------------- | :-------------------------------------------- |
+| **Berdasarkan Tag**   | `h1`, `p`, `a`     | "Cari semua **gedung** di kota ini."          |
+| **Berdasarkan Class** | `.product-price`   | "Cari semua bangunan dengan label **Toko**."  |
+| **Berdasarkan ID**    | `#main-navigation` | "Cari bangunan dengan nomor alamat **#123**." |
+
+```html
+<div id="main-content">
+  <h1 class="title">Judul Artikel</h1>
+  <p class="summary">Ini adalah ringkasan singkat...</p>
+  <p class="author">Penulis: Budi</p>
+</div>
+```
+
+- `h1`: Akan memilih elemen `<h1>`.
+- `.summary`: Akan memilih paragraf dengan `class="summary"`.
+- `#main-content`: Akan memilih `div` dengan `id="main-content"`.
+
+<Aside>
+  Dalam web scraping, 90% waktu kita akan menggunakan **Class Selector**
+  (`.nama-class`). Kenapa? Karena developer sering menggunakannya untuk
+  mengelompokkan elemen-elemen yang sejenis (misalnya, semua judul produk, semua
+  harga, dll).
+</Aside>
+
+## 2. Selector Kombinasi
+
+Kadang, target kita tidak sesederhana itu. Kita perlu memberikan alamat yang lebih spesifik dengan menggabungkan beberapa selector.
+
+Anggap kita punya struktur HTML seperti ini:
+
+```html
+<div class="product-card">
+  <h2 class="product-title">Sepatu Lari Keren</h2>
+  <div class="details">
+    <span class="price">Rp 500.000</span>
+    <a href="/review" class="reviews">Lihat Review</a>
+  </div>
+</div>
+```
+
+| Tipe                         | Contoh Selector      | Artinya...                                                         |
+| :--------------------------- | :------------------- | :----------------------------------------------------------------- |
+| **Descendant** (spasi)       | `.details span`      | Cari `span` yang ada **di dalam** elemen dengan `class="details"`. |
+| **Child** ( `>` )            | `.product-card > h2` | Cari `h2` yang merupakan **anak langsung** dari `.product-card`.   |
+| **Adjacent Sibling** ( `+` ) | `h2 + .details`      | Cari `.details` yang muncul **tepat setelah** `h2`.                |
+
+Kombinasi ini sangat kuat karena memungkinkan kita menavigasi hierarki HTML dengan presisi.
+
+## 3. Selector Atribut
+
+Terkadang, petunjuk terbaik bukanlah nama tag atau class, melainkan **atribut** yang menempel padanya. Ini seperti mencari rumah yang "punya garasi" atau yang "catnya warna biru".
+
+Mari kita lihat contoh HTML-nya:
+
+```html
+<div>
+  <!-- Selector a[href] akan memilih 2 link pertama, tapi tidak yang ketiga -->
+  <a href="/products/sepatu-baru">Link Produk</a>
+  <a href="/external-site" target="_blank">Link Eksternal</a>
+  <a>Link Tanpa href</a>
+</div>
+<div>
+  <!-- Selector img[alt*="sepatu"] akan memilih gambar pertama -->
+  <img src="sepatu.jpg" alt="Foto sepatu lari keren" />
+  <img src="kaos.jpg" alt="Foto kaos oblong" />
+</div>
+<!-- Selector div[data-testid^="product"] akan memilih div ini -->
+<div data-testid="product-card-123">
+  <p>Info produk...</p>
+</div>
+```
+
+Berikut adalah beberapa contoh penggunaannya:
+
+| Contoh Selector               | Artinya...                                                                   |
+| :---------------------------- | :--------------------------------------------------------------------------- |
+| `a[href]`                     | Cari semua tag `<a>` yang **memiliki** atribut `href`.                       |
+| `a[target="_blank"]`          | Cari tag `<a>` yang punya atribut `target` dengan **nilai persis** `_blank`. |
+| `img[alt*="sepatu"]`          | Cari `<img>` yang atribut `alt`-nya **mengandung kata** "sepatu".            |
+| `div[data-testid^="product"]` | Cari `div` yang `data-testid`-nya **diawali dengan** "product".              |
+
+<Aside type="caution" title="Senjata Rahasia">
+  Selector atribut `*=`, `^=`, dan `$=` (diakhiri dengan) adalah senjata rahasia
+  kita untuk melawan website modern yang nama `class`-nya sering berubah-ubah
+  atau dibuat secara acak (contoh: `css-1q2w3e4r`). Seringkali, atribut seperti
+  `data-testid` atau `data-cy` tetap konsisten!
+</Aside>
+
+Dengan menguasai berbagai jenis selector ini, hampir tidak ada elemen di halaman web yang tidak bisa kamu jangkau. Di bab berikutnya, kita akan belajar cara menggunakan "peta" ini secara praktis dengan alat bantu di browser.

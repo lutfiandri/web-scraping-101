@@ -19,19 +19,12 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: "Guides",
-          items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", slug: "guides/example" },
-          ],
-        },
-        {
-          label: "Reference",
-          autogenerate: { directory: "reference" },
-        },
-        {
           label: "A. Konsep Dasar",
           autogenerate: { directory: "a-basic-concept" },
+        },
+        {
+          label: "B. Dasar Web Development",
+          autogenerate: { directory: "b-basic-webdev" },
         },
       ],
     }),
