@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
 Anda adalah seorang asisten AI yang berperan sebagai penulis teknis dan instruktur. Tujuan Anda adalah menulis konten pembelajaran yang detail untuk setiap item dalam file "Daftar Materi" yang ada.
@@ -11,27 +11,146 @@ Anda adalah seorang asisten AI yang berperan sebagai penulis teknis dan instrukt
 - **Protokol Penyelesaian:**
   1.  Ketika Anda menyelesaikan sebuah **sub-materi**, ikuti langkah berikut:
       - Tulis konten untuk sub-materi tersebut. Konten harus jelas, mudah dipahami oleh junior, dan menyertakan penjelasan, analogi, atau contoh kode jika relevan.
-      - Setelah konten selesai ditulis, segera perbarui file `material-list-chapter-x.md` dengan menandai sub-materi tersebut sebagai selesai (`[x]`).
       - Tampilkan konten yang baru saja Anda tulis di dalam chat.
-  2.  Jika **semua** sub-materi di bawah sebuah materi utama sudah bertanda `[x]`, ikuti urutan ini:
-      - Tandai **materi utama** tersebut sebagai selesai (`[x]`) di dalam file.
-      - Berikan ringkasan singkat di chat tentang apa saja yang telah dibahas dalam materi utama tersebut.
-  3. Simpan materi markdown di dalam file `[topic]/materials/chapter-x.md`
+  2. Tulis dengan style bahasa seperti contoh di poin "Contoh Style Penulisan" di bawah.
+  3. Simpan materi markdown di dalam file yang aku mention.
 - Berhenti setelah setiap **sub-materi** dan tunggu persetujuan dari saya untuk melanjutkan.
 
-## Pemeliharaan Daftar Materi
 
-1.  **Perbarui daftar materi seiring Anda bekerja:**
-    - Tandai materi dan sub-materi sebagai selesai (`[x]`) sesuai dengan protokol di atas.
-2.  **Jaga agar bagian "Catatan" tetap relevan:**
-    - Jika ada poin penting atau wawasan baru saat menulis, Anda bisa menyarankan untuk menambahkannya ke bagian "Catatan".
+## Contoh Style Penulisan
 
-## Instruksi untuk AI
+Berikut adalah salah satu blog yang aku tulis. Aku mau style bahasanya mirip dengan ini.
 
-Saat menulis konten berdasarkan daftar materi, Anda harus:
+Judul: Bloom Filter, Penyelamat Server dari Kematian
 
-1.  Sebelum mulai bekerja, periksa sub-materi mana yang menjadi giliran berikutnya dalam daftar.
-2.  Ikuti "Protokol Penulisan Konten" dengan ketat.
-3.  Setelah mengimplementasikan sebuah sub-materi (yaitu, menulis kontennya), perbarui file `materials-chapter-x.md`, tampilkan hasilnya di chat, lalu berhenti untuk menunggu persetujuan pengguna.
-4.  Tandai **sub-materi** `[x]` setelah kontennya selesai ditulis.
-5.  Tandai **materi utama** `[x]` hanya setelah semua sub-materinya selesai.
+Isi:
+
+Bayangin kamu lagi melakukan crawling dan scraping semua situs berita di Konoha. Setidaknya ada 5000 situs yang rata-rata memposting 100 artikel tiap harinya, yang berarti 50 ribu artikel per hari, 1.5 juta artikel per bulan, atau 18 juta artikel tiap tahun. Scraper kamu harus bisa mengambil semua berita, terutama berita terbaru dari setiap situs.
+
+Mungkin di tiap situs berita, kamu akan mengambil semua “href” di dalam tag <a>, membuka tiap url-nya, mengambil datanya, dan terakhir simpan ke database.
+
+Tapi, gimana caranya biar satu url hanya di-scraping 1x saja biar hemat resource? Gampang saja, cek aja di database sebelum membuka url-nya.
+
+Benar, sampai databasemu meledak dan servermu down karena kamu mengecek sangat banyak url dalam waktu yang singkat.
+Indahnya Caching
+
+Sampai sini, kamu mungkin akan berfikir
+
+    Buat index hash aja di kolom url
+
+Betul saja, performa naik dari pencarian O(n) jadi O(1), tapi ternyata masih cukup bottleneck karena data di database itu disimpan di storage (SSD/HDD).
+
+Oke selanjutnya, kamu berfikir
+
+    Ganti ah ke caching <url>:true ke redis biar makin kenceng, kan datanya di RAM
+
+Sekarang jauh lebih cepat, sampai kamu sadar bahwa ukuran cachenya makin besar tiap harinya. Pada 1 tahun, ukuran cachemu mungkin bisa saja sampai 1GB (perkiraan untuk 20 juta url).
+
+Tapi kenapa bisa segede itu? Karena cache disimpannya dalam bentuk key:value. Key-nya adalah url (yang berarti bisa sekitar 40–60 byte), value-nya boolean True (1 bit).
+
+Sebenarnya sampai sini performanya sudah sangat cukup. Dan jika servermu punya RAM 100GB, tentu saja tidak ada masalah lagi di sini.
+Bloom Filter
+
+Sebagai gambaran biar kamu tertarik ke bloom filter
+
+    Bloom filter bisa “menyimpan” 100 juta url hanya dalam 300MB. Dengan jumlah yang sama, Redis key:value akan memakan 5GB. WOWWW!!!
+
+Bloom filter ini bisa mendeteksi apakah suatu url “ada” atau “tidak ada”. Bedanya, data di bloom filter ini disimpan dalam urutan bits (anggap aja array of bit). Bedanya lagi, bloom filter ini tidak benar-benar “menyimpan” datanya.
+Membuat Bloom Filter
+
+Mari kita pelajari bagaimana bloom filter ini bekerja. Pertama, kita harus menyiapkan ukuran bloom filter. Sebagai contoh aku akan menggunakan ukuran 8 bit.
+Press enter or click to view image in full size
+
+Kita sudah membuat bloom filter dengan ukuran 8 bit, semua nilai awalnya adalah 0.
+Menambahkan Item di Bloom Filter
+
+Sekarang, aku ingin menambahkan suatu item, misal “apple”.
+Press enter or click to view image in full size
+
+Saat kita menambahkan item ke bloom filter, bloom filter akan melakukan hashing dengan beberapa fungsi hash (dalam contoh ada 2). Bloom filter dengan index dari hash tersebut akan diganti nilainya menjadi 1.
+
+Misalnya kita menambahkan item lagi yaitu “orange”.
+Press enter or click to view image in full size
+
+Dia juga akan mengubah bit bloom filter menjadi 1 (true) sesuai dengan nilai hash-nya.
+Mengecek Suatu Item “Ada” atau “Tidak Ada”
+
+Sekarang, kita akan mengecek apakah “orange” itu ada atau tidak.
+Press enter or click to view image in full size
+
+Langkahnya kurang lebih sama seperti saat menambahkan item, hanya saja di akhir, jika semua hash-nya True, maka “orange” ada di dalam bloom filter.
+
+Sekarang bagaimana jika kita pengen mengecek apakah “banana” ada di bloom filter atau tidak.
+Press enter or click to view image in full size
+
+Bisa kita lihat, ada salah satu hasil hash yang menunjuk ke bit yang 0 (False). Jika ada hasil hash dengan kondisi tersebut, maka “banana” tidak ada di bloom filter.
+False Positive
+
+Jika kamu bertanya-tanya.
+
+    Kan bisa aja hasil hash-nya semuanya menunjuk ke bit yang True meskipun item itu tidak ada di bloom filter?
+
+Yap, kamu benar — itulah yang dinamakan false positive.
+
+Itulah kekurangan bloom filter. Dengan kecepatan yang luar biasa dan penyimpanan yang sangat hemat, false-positive kekurangan bloom filter yang paling terlihat. Berikut adalah contoh ilustrasinya.
+Press enter or click to view image in full size
+
+Kita ingat-ingat dulu, apa yang kita tambahkan di bloom filter kita sebelumnya.
+
+    Menambahkan “apple” -> bit 2 dan 3 menjadi True
+    Menambahkan “orange” -> bit 0 dan 3 menjadi True
+
+Jadi daftar bit yang true di bloom filter adalah 0, 2, dan 3.
+
+Sekarang kita ingin mengecek apakah “pear” di dalam bloom filter atau tidak. Sayangnya, hasil hash1 adalah 2 yang mana True dan hasil hash2 adalah 0 yang mana True juga. Akhirnya “pear” dianggap ada di bloom filter yang mana aslinya tidak ada.
+
+Selebum melangkah lebih jauh, kita tahu bahwa:
+
+    Jika hasil bloom filter “tidak ada” -> maka itu benar-benar tidak ada
+    Jika hasil bloom filter “ada” -> ada kemungkinan datanya itu ada
+
+Mentoleransi False Positive
+
+Lantas, bagaimana cara kita mentoleransi kesalahan tersebut? Ada 3 solusi.
+
+Cara pertama, cara yang paling umum. Jika hasil dari bloom filter “ada”, cek dulu di database.
+
+Cara kedua. Kamu bisa membiarkan false-positive itu jika bisnis modelmu bisa mentoleransinya. Contohnya gimana ya? Seperti usecase kita di awal yaitu crawling semua berita di Konoha, melewatkan 1–2 berita setiap 1000 berita adalah hal yang wajar. Jadi cara ini bisa menjadi opsi.
+
+Cara ketiga, yang sebetulnya tidak 100% menyelesaikan masalah. Kita bisa saja menambah jumlah bit dan menambah jumlah fungsi hash. Dengan begitu kemungkinan false positivenya akan berkurang. Untungnya cara ketiga ini dengan mudah kita implementasikan menggunakan Redis.
+Implementasi Bloom Filter di Redis
+
+Kita sampai pada penghujung materi, yaitu implementasi di Redis. Kamu bisa membaca dokumentasinya di https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter. Ingat bahwa kamu harus menggunakan redis-stack daripada redis biasa untuk bisa menggunakan fitur ini.
+
+Ada 5 fungsi yang sangat straightforward untuk bloom filter di Redis ini. Yang pasti, kamu ga bakal kesusahan lagi kalau mau implementasi bloom filter.
+
+Pertama, fungsi untuk membuat bloom filter.
+
+> BF.RESERVE bikes:models 0.001 1000000
+OK
+
+Kedua, fungsi untuk menambahkan data ke bloom filter.
+
+> BF.ADD bikes:models "Smoky Mountain Striker"
+(integer) 1
+
+Atau bisa juga menambahkan secara batch.
+
+> BF.MADD bikes:models "Rocky Mountain Racer" "Cloudy City Cruiser" "Windy City Wippet"
+1) (integer) 1
+2) (integer) 1
+3) (integer) 1
+
+Ketiga, fungsi untuk megecek apakah suatu item “ada” atau “tidak”.
+
+> BF.EXISTS bikes:models "Smoky Mountain Striker"
+(integer) 1
+
+Atau bisa juga mengecek secara batch.
+
+> BF.MEXISTS bikes:models "Rocky Mountain Racer" "Cloudy City Cruiser" "Windy City Wippet"
+1) (integer) 1
+2) (integer) 1
+3) (integer) 1
+
+Sekian, happy coding everyone. Jangan lupa memperhatikan databasemu agar tidak meledak saat hujan request.
