@@ -1,5 +1,5 @@
 ---
-title: B.6. HTTP Request & Response, Percakapan Digital
+title: B.6. HTTP Request & Response
 description: Memahami bagaimana scraper berkomunikasi dengan server melalui protokol HTTP.
 ---
 
@@ -88,7 +88,7 @@ Set-Cookie: session_id=abc123; Path=/
 
 Memahami HTTP Request/Response sangat penting karena:
 
-### A. Error Handling
+### Error Handling
 
 ```python
 import requests
@@ -105,7 +105,7 @@ elif response.status_code == 429:
     # Tambahkan delay
 ```
 
-### B. Headers Manipulation
+### Headers Manipulation
 
 ```python
 headers = {
@@ -115,7 +115,7 @@ headers = {
 response = requests.get(url, headers=headers)
 ```
 
-### C. Session & Cookies
+### Session & Cookies
 
 Beberapa website butuh "sesi" login sebelum bisa diakses:
 
